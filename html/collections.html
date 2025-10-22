@@ -17,11 +17,30 @@
             <button onclick="location.href='../html/collections.html'">Collections</button>
         </div>
         <p align="center">
-            <button onclick="location.href='../html/collections.html'">Archaeology</button>
-            <button onclick="location.href='../html/collections.html'">Anthropology</button>
+            <button onclick="showSection('anthropology')">Anthropology</button>
+            <button onclick="showSection('archaeology')">Archaeology</button>
         </p>
+
+        <section id="anthropology" class="collection-section" style="display:none;">
+            <div class="item-index-2">
+                <h2>Anthropology</h2>
+            </div>
+        </section>
+        <section id="archaeology" class="collection-section" style="display:none;">
+            <div class="item-index-2">
+                <h2>Archaeology</h2>
+            </div>
+        </section>
 
         <hr />
         <p>This page was created as an academic activity and all information is fictional.<br>Some textual content was created using generative AI and directed by a human</p>
     </body>
 </html>
+
+<script>
+    function showSection(section) {
+        const sections = document.querySelectorAll('.collection-section');
+        sections.forEach(s => s.style.display = 'none');
+        document.getElementById(section).style.display = 'block';
+    }
+</script>
