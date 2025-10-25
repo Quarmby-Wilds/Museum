@@ -17,5 +17,77 @@
             <button onclick="location.href='../html/collections.html'">Collections</button>
             <button onclick="location.href='../html/shop.html'">Shop</button>
         </div>
+
+        <div class="grid-container-shop">
+            <div class="content-area">
+                <div class="item-shop-1" data-id="item-001">
+                    <h2>Handcrafted Clay Pendant</h2>
+                    <div class="shop-image-1 photo-container">
+                        <img src="../images/staff/drHanae.png" alt="Illustration of Dr. Hanae" class="photo-image" onclick="openModal(this)" />
+                    </div>
+                    <p>
+                        <b>Price: </b>¥3,800<br>
+                        <b>Description: </b>A limited-edition ceramic pendant inspired by the spiral and flame motifs of Jōmon Roots, hand-shaped by contemporary artisans in Aomori. Each piece is slightly different — no two swirls are alike — echoing the individuality of the prehistoric cord-marked vessels that inspired it. Comes in a recycled rice-paper box with museum seal and story card.<br><br>
+                        “Even the smallest artifact can carry an entire life story.” <b>— Keiko Tanaka, Collections Manager</b>
+                    </p>
+                    <div class="shop-button">
+                        <button onclick="addToCart('item001')">Add to Cart</button>
+                    </div>
+                </div>       
+                <div class="item-shop-2"data-id="item-002">
+                    <h2>Silk Scarf</h2>
+                    <div class="shop-image-2 photo-container">
+                        <img src="../images/staff/drHanae.png" alt="Illustration of Dr. Hanae" class="photo-image" onclick="openModal(this)" />
+                    </div>
+                    <p>
+                        <b>Price: </b>¥8,200<br>
+                        <b>Description: </b>This elegant silk scarf captures the rhythmic wave lines and trade patterns depicted in the Maritime Exchange gallery. Designed in collaboration with textile artists from Okinawa, it features indigo and rust hues that mirror the ocean routes connecting Japan, the Ryukyu Islands, and Southeast Asia.<br><br>
+                        “The sea was never a barrier — it was the first storyteller.” <b>— Dr. Daniel Ishikawa, Curator of Anthropology</b>
+                    </p>
+                    <div class="shop-button">
+                        <button onclick="addToCart('item002')">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="item-shop-3" data-id="item-003">
+                    <h2>Replica Amulet</h2>
+                    <div class="shop-image-3 photo-container">
+                        <img src="../images/staff/drHanae.png" alt="Illustration of Dr. Hanae" class="photo-image" onclick="openModal(this)" />
+                    </div>
+                    <p>
+                        <b>Price: </b>¥5,000<br>
+                        <b>Description: </b>A faithful bronze-tone replica of a protective amulet unearthed in northern Honshu, on display in the Memory & Myth gallery. The original was inscribed with protective script fragments now interpreted as early prayers. Each replica includes a miniature translation card and velvet display pouch.<br><br>
+                        “We don't just recover objects — we restore relationships.” <b>— Dr. Hanae Mori, Founding Director</b><br><br>&nbsp;
+                    </p>
+                    <div class="shop-button">
+                        <button onclick="addToCart('item003')">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="item-shop-4" data-id="item-004">
+                    <h2>Book — Hidden Histories: The Living Layers of Japan</h2>
+                    <div class="shop-image-4 photo-container">
+                        <img src="../images/staff/drHanae.png" alt="Illustration of Dr. Hanae" class="photo-image" onclick="openModal(this)" />
+                    </div>
+                    <p>
+                        <b>Price: </b>¥4,600<br>
+                        <b>Description: </b>The official companion to the museum's opening exhibition, this bilingual (Japanese-English) catalog includes essays by museum staff and full-color photographs of key artifacts. Chapters explore themes of ancestry, trade, and transformation through archaeology, anthropology, and cultural history.<br><br>
+                        “Truth in history isn't what survives — it's what we take the time to listen for.” <b>— Yuki Nakamura, Cultural Historian</b>
+                    </p>
+                    <div class="shop-button">
+                        <button onclick="addToCart('item004')">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+                <img id="modal-image" src="" alt="">
+            </div>
+        </div>
+
+        <footer>
+            <p>This page was created as an academic activity and all information is fictional.<br>Some textual content was created using generative AI and directed by a human.<br>Portraits were commissioned by Doctorqueue.</p>
+        </footer>
     </body>
 </html>
