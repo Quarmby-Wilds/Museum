@@ -72,6 +72,25 @@ button {
     grid-template-rows: 1fr auto;
 }
 
+/*
+.full-width-background {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    background-image: url("../images/indexbg.png");
+    background-size: cover;
+    background-position: center;
+    top: 50px;
+    left: 0;
+    width: 100%;
+    min-height: 1vh;
+    z-index: -1;
+}
+*/
+
+.grid-container {
+    background-image: url("../images/indexbg.png");
+}
+
 .photo-image {
     max-width: 100%;
     border-radius: 25px;
@@ -85,19 +104,6 @@ button {
 .grid-container-index {
     display: grid;
     grid-template-columns: 1fr minmax(0, 1200px) 1fr;
-}
-
-.full-width-background {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    background-image: url("../images/indexBg.png");
-    background-size: cover;
-    background-position: center;
-    top: 50px;
-    left: 0;
-    width: 100%;
-    min-height: 1vh;
-    z-index: -1;
 }
 
 .item-index-2 { /* intro */
@@ -140,7 +146,6 @@ button {
     display: grid;
     grid-template-columns: 1fr minmax(0, 1200px) 1fr;
     grid-template-rows: auto;
-    background-color: #2E617C;
 }
 
 .item-staff-1 { /* title */
@@ -221,7 +226,6 @@ button {
     display: grid;
     grid-template-columns: 1fr minmax(0, 1200px) 1fr;
     grid-template-rows: auto;
-    background-color: #2E617C;
 }
 
 .collections-title {
@@ -277,7 +281,6 @@ button {
     display: grid;
     grid-template-columns: 1fr minmax(0, 1200px) 1fr;
     grid-template-rows: auto;
-    background-color: #2E617C;
 }
 
 .item-shop-1 {
