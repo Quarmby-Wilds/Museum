@@ -55,7 +55,6 @@ function addToCart(button) {
         const thisItem = _cartSnapshot.find((i) => i.id === id);
         if (badge) badge.textContent = thisItem ? `Qty: ${thisItem.qty}` : "Qty: 0";
     });
-
 }
 
 //// ---- CART CONSTANTS ---- ////
