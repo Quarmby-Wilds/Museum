@@ -354,13 +354,6 @@ button.active {
     margin-left: 10px;
 }
 
-.shop-currency-toggle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 15px 0;
-}
-
 /* .buy-button {
     background-color: #462B08;
     border: none;
@@ -404,22 +397,25 @@ button.active {
     margin: 5px 10px;
 }
 
-.currency-btn {
-    font-size: 0.9em;
-    padding: 4px 8px;
-    margin-left: 4px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    border-radius: 10px;
-    text-transform: uppercase;
-    background-color: #462B08;
-    border: none;
-    color: #FFE5C3;
+.cart-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(70,43,8,0.08);
 }
-.currency-btn.active {
-    background-color: #573202;
-    font-weight: bold
+.cart-item-left {
+    flex: 1 1 auto;
+    text-align: left;
+    color: #462B08;
+    font-family: "Playfair Display Italic", serif;
+}
+.cart-item-right {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
 #emptyMsg {

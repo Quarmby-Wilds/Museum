@@ -1,8 +1,9 @@
-//// ---- CART ---- ////
+//// ---- CART STORAGE ---- ////
 
-// - Read cart from local storage - //
+// - LocalStorage key for saving cart data - //
 const CART_KEY = "museumCartV1";
 
+// - Read cart contents from LocalStorage - //
 function readCart() {
     try {
         return JSON.parse(localStorage.getItem(CART_KEY)) || [];
@@ -11,16 +12,18 @@ function readCart() {
     }
 }
 
-// - Write cart to local storage - //
+// - Write updated cart contents to LocalStorage - //
 function writeCart(cart) {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
 }
 
-// - Add an item to the cart - //
+//// ---- ADD TO CART ---- ////
+
+// - Add a selected item to the cart or increase its quantity - //
 function addToCart(button) {
     const id = button.dataset.id;
     const name = button.dataset.name;
-    const price = parseInt(button.dataset.price);
+    const price = parseFloat(button.dataset.price); // USD only
     const image = button.dataset.image;
 
     const cart = readCart();
@@ -29,12 +32,13 @@ function addToCart(button) {
     if (existingItem) {
         existingItem.qty += 1;
     } else {
-        cart.push({ id, name, price, image, qty: 1 });
+        cart.push({id, name, price, image, qty: 1});
     }
 
     writeCart(cart);
     console.log(`Added to cart: ${name}`);
 
+    // - Update the quantity badge on the shop page - //
     const itemCard = button.closest(".shop-item");
     const badge = itemCard?.querySelector(".qty-badge");
     const thisItem = cart.find((i) => i.id === id);
@@ -42,87 +46,26 @@ function addToCart(button) {
     if (badge && thisItem) {
         badge.textContent = `Qty: ${thisItem.qty}`;
     }
-}
 
-// - Update all quantity badges on shop items - //
-function updateAllBadges() {
-    const cart = readCart();
-    document.querySelectorAll(".shop-item").forEach((item) => {
-        const id = item.dataset.id;
-        const badge = item.querySelector(".qty-badge");
-        const cartItem = cart.find((i) => i.id === id);
-
-        badge.textContent = `Qty: ${cartItem ? cartItem.qty : 0}`;
+    // - Ensure all shop badges reflect localStorage state after add - //
+    const _cartSnapshot = readCart();
+    document.querySelectorAll(".shop-item").forEach((itemCard) => {
+        const id = itemCard.dataset.id;
+        const badge = itemCard.querySelector(".qty-badge");
+        const thisItem = _cartSnapshot.find((i) => i.id === id);
+        if (badge) badge.textContent = thisItem ? `Qty: ${thisItem.qty}` : "Qty: 0";
     });
+
 }
 
-//// ---- CURRENCY HANDLING ---- ////
+//// ---- CART CONSTANTS ---- ////
 
-let currentCurrency = "JPY"; // default
-
-// - Format number as currency string - //
-function money(amount) {
-    return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: currentCurrency,
-        maximumFractionDigits: currentCurrency === "JPY" ? 0 : 2
-    }).format(amount);
-}
-
-// - Convert a price (JPY) to the active currency - //
-function convertPrice(priceJPY) {
-    const JPY_TO_USD = 0.0065;
-    if (currentCurrency === "USD") {
-        return priceJPY * JPY_TO_USD;
-    } else {
-        return priceJPY;
-    }
-}
-
-// - Update visible prices on shop page - //
-function updateShopPrices() {
-    const els = document.querySelectorAll(".price");
-    if (!els.length) return;
-
-    els.forEach((el) => {
-        const jpy = Number(el.dataset.price);
-        if (Number.isNaN(jpy)) {
-            el.textContent = "";
-            return;
-        }
-        const converted = convertPrice(jpy);
-        el.textContent = money(converted);
-    });
-}
-
-// - Setup currency toggle buttons (JPY / USD) - //
-function setupCurrencyToggle() {
-    const buttons = Array.from(document.querySelectorAll(".currency-btn"));
-    if (!buttons.length) return;
-
-    const activeBtn = buttons.find((b) => b.classList.contains("active"));
-    if (activeBtn) currentCurrency = activeBtn.dataset.currency;
-
-    buttons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            if (btn.classList.contains("active")) return;
-
-            currentCurrency = btn.dataset.currency;
-
-            buttons.forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-
-            if (document.querySelector(".shop-item")) updateShopPrices();
-            if (document.getElementById("summary")) render();
-        });
-    });
-}
-
-//// ---- CART PAGE CONSTANTS ---- ////
-
+// - Tax, shipping, and discount values - //
 const TAX_RATE = 0.102;
 const MEMBER_DISCOUNT_RATE = 0.15;
 const SHIPPING_RATE = 25.0;
+
+// - Volume discount tiers: [min, max, rate] - //
 const VOLUME_TIERS = [
     [0.0, 49.99, 0.0],
     [50.0, 99.99, 0.05],
@@ -130,7 +73,7 @@ const VOLUME_TIERS = [
     [200.0, Infinity, 0.15]
 ];
 
-// - Return the volume discount rate based on total - //
+// - Determine applicable volume discount rate - //
 function volumeRate(total) {
     for (const [min, max, rate] of VOLUME_TIERS) {
         if (total >= min && total <= max) return rate;
@@ -140,7 +83,7 @@ function volumeRate(total) {
 
 //// ---- CART ITEM OPERATIONS ---- ////
 
-// - Remove one unit of an item from the cart - //
+// - Remove one quantity of an item (or delete it entirely) - //
 function removeItem(id) {
     const cart = readCart();
     const item = cart.find((it) => it.id === id);
@@ -158,28 +101,35 @@ function removeItem(id) {
     render();
 }
 
-// - Clear entire cart and reset member toggle - //
+// - Clear all items from the cart - //
 function clearCart() {
     localStorage.removeItem(CART_KEY);
     const memberToggle = document.getElementById("memberToggle");
     if (memberToggle) memberToggle.checked = false;
     render();
-    console.log("Cart cleared.");
 }
 
-//// ---- CART PAGE RENDERING ---- ////
+//// ---- UTILITIES ---- ////
 
-// - Render cart items and totals - //
+// - Format numbers as USD currency text - //
+function money(n) {
+    const sign = n < 0 ? -1 : 1;
+    const s = "$" + Math.abs(n).toFixed(2);
+    return sign < 0 ? "(" + s + ")" : s;
+}
+
+//// ---- CART RENDERING ---- ////
+
+// - Build and display the cart contents and summary - //
 function render() {
     const itemsDiv = document.getElementById("items");
     const summaryPre = document.getElementById("summary");
     const emptyMsg = document.getElementById("emptyMsg");
-    const memberToggle = document.getElementById("memberToggle");
-    const isMember = memberToggle?.checked ?? false;
+    const isMember = document.getElementById("memberToggle")?.checked ?? false;
 
     let cart = readCart().filter((it) => it.qty > 0 && it.price > 0);
 
-    // - Empty cart message - //
+    // - Handle empty cart state - //
     if (cart.length === 0) {
         itemsDiv.hidden = true;
         summaryPre.hidden = true;
@@ -188,106 +138,134 @@ function render() {
         return;
     }
 
-    // - Build item list - //
-    itemsDiv.innerHTML = "";
+    // - Prepare to display cart items - //
     itemsDiv.hidden = false;
+    summaryPre.hidden = false;
     emptyMsg.hidden = true;
+
+    // clear container
+    itemsDiv.innerHTML = "";
 
     let itemTotal = 0;
 
-    for (const item of cart) {
-        const convertedPrice = convertPrice(item.price);
-        const lineTotal = convertedPrice * item.qty;
+    // - Build each item line with Add and Remove buttons - //
+    cart.forEach((it) => {
+        const lineTotal = it.qty * it.price;
         itemTotal += lineTotal;
 
-        const line = document.createElement("div");
-        line.style.display = "flex";
-        line.style.justifyContent = "space-between";
-        line.style.alignItems = "center";
-        line.style.marginBottom = "4px";
+        // container row
+        const row = document.createElement("div");
+        row.className = "cart-line";
 
-        const nameText = document.createElement("span");
-        nameText.textContent = `${item.qty} × ${item.name}`;
-        line.appendChild(nameText);
+        // left text
+        const left = document.createElement("div");
+        left.className = "cart-item-left";
+        left.innerHTML = `${it.qty} × ${it.name} — ${money(lineTotal)}`;
+        row.appendChild(left);
 
+        // right button group
+        const right = document.createElement("div");
+        right.className = "cart-item-right";
+
+        // Add button (reuses addToCart)
+        const addBtn = document.createElement("button");
+        addBtn.className = "cart-btn";
+        addBtn.type = "button";
+        addBtn.textContent = "Add";
+        // set dataset so existing addToCart can use it
+        addBtn.dataset.id = it.id;
+        addBtn.dataset.name = it.name;
+        addBtn.dataset.price = String(it.price);
+        addBtn.dataset.image = it.image ?? "";
+        addBtn.onclick = () => {
+            addToCart(addBtn);
+            // re-render so UI updates immediately
+            render();
+        };
+        right.appendChild(addBtn);
+
+        // Remove button (calls existing removeItem)
         const removeBtn = document.createElement("button");
+        removeBtn.className = "cart-btn";
+        removeBtn.type = "button";
         removeBtn.textContent = "Remove";
-        removeBtn.style.marginLeft = "10px";
-        removeBtn.onclick = () => removeItem(item.id);
-        line.appendChild(removeBtn);
+        removeBtn.onclick = () => {
+            removeItem(it.id);
+            // render() is called by removeItem already, but keep safe
+            // (removeItem writes cart and calls render())
+        };
+        right.appendChild(removeBtn);
 
-        const priceText = document.createElement("span");
-        priceText.textContent = money(lineTotal);
-        line.appendChild(priceText);
+        row.appendChild(right);
 
-        itemsDiv.appendChild(line);
-    }
+        itemsDiv.appendChild(row);
+    });
 
-    // - Calculate totals and discounts - //
-    const USD_TO_JPY = 1 / 0.0065;
-    const volumeDiscRate = volumeRate(itemTotal);
-    let volumeDisc = 0;
-    let memberDisc = 0;
+    // - Calculate discounts and totals - //
+    const volRate = volumeRate(itemTotal);
+    const volDiscount = itemTotal * volRate;
+    const memberDiscount = isMember ? itemTotal * MEMBER_DISCOUNT_RATE : 0;
 
-    if (isMember && volumeDiscRate > 0) {
-        const choice = prompt("Only one discount may be applied. Type 'M' for Member or 'V' for Volume:") || "";
-        if (choice.toUpperCase() === "M") {
-            memberDisc = itemTotal * MEMBER_DISCOUNT_RATE;
+    let appliedVol = 0;
+    let appliedMember = 0;
+
+    // - Only one discount can be applied - //
+    if (volDiscount > 0 && memberDiscount > 0) {
+        const choice = prompt("Only one discount may be applied. Type 'M' for Member or 'V' for Volume:");
+        if (choice && choice.toUpperCase() === "M") {
+            appliedMember = memberDiscount;
         } else {
-            volumeDisc = itemTotal * volumeDiscRate;
+            appliedVol = volDiscount;
         }
-    } else if (isMember) {
-        memberDisc = itemTotal * MEMBER_DISCOUNT_RATE;
-    } else if (volumeDiscRate > 0) {
-        volumeDisc = itemTotal * volumeDiscRate;
+    } else if (memberDiscount > 0) {
+        appliedMember = memberDiscount;
+    } else if (volDiscount > 0) {
+        appliedVol = volDiscount;
     }
 
-    const shipping = currentCurrency === "USD" ? 25.0 : 25.0 * USD_TO_JPY;
-    const subtotal = itemTotal - volumeDisc - memberDisc + shipping;
-    const taxAmount = subtotal * TAX_RATE;
-    const invoiceTotal = subtotal + taxAmount;
+    // - Compute subtotal, tax, and final total - //
+    const subTotal = itemTotal - appliedVol - appliedMember + SHIPPING_RATE;
+    const taxAmount = subTotal * TAX_RATE;
+    const invoiceTotal = subTotal + taxAmount;
 
     // - Display summary - //
-    summaryPre.hidden = false;
-    summaryPre.textContent = `Hello Shopper, here is your Cart Summary.
-
+    const summaryText = `
 Subtotal of Items:   ${money(itemTotal)}
-Volume Discount:     ${money(-volumeDisc)}
-Member Discount:     ${money(-memberDisc)}
-Shipping:            ${money(shipping)}
-Subtotal (Taxable):  ${money(subtotal)}
-Tax Rate:            ${(TAX_RATE * 100).toFixed(2)}%
+Volume Discount:     ${money(-appliedVol)}
+Member Discount:     ${money(-appliedMember)}
+Shipping:            ${money(SHIPPING_RATE)}
+Subtotal (Taxable):  ${money(subTotal)}
+Tax Rate:            ${(TAX_RATE * 100).toFixed(1)}%
 Tax Amount:          ${money(taxAmount)}
+Invoice Total:       ${money(invoiceTotal)}
+    `;
 
-----------------------------------------
-Cart Total:          ${money(invoiceTotal)}`;
+    summaryPre.textContent = summaryText;
 }
+
+//// ---- EVENT LISTENERS ---- ////
+
+// - React to member discount toggle and clear button - //
+document.getElementById("memberToggle")?.addEventListener("change", render);
+document.getElementById("clearBtn")?.addEventListener("click", clearCart);
+
+// - Render cart when the page first loads - //
+render();
 
 //// ---- PAGE INITIALIZATION ---- ////
 
-document.addEventListener("DOMContentLoaded", () => {
-    const clearBtn = document.getElementById("clearBtn");
-    if (clearBtn) {
-        clearBtn.addEventListener("click", clearCart);
-    }
-
-    const memberToggle = document.getElementById("memberToggle");
-    if (memberToggle) {
-        memberToggle.addEventListener("change", render);
-    }
+// - Wait until everything on the page has fully loaded before syncing qty badges - //
+window.addEventListener("load", () => {
+    const cart = readCart();
+    document.querySelectorAll(".shop-item").forEach((itemCard) => {
+        const id = itemCard.dataset.id;
+        const badge = itemCard.querySelector(".qty-badge");
+        const thisItem = cart.find((i) => i.id === id);
+        if (badge) {
+            badge.textContent = thisItem ? `Qty: ${thisItem.qty}` : "";
+        }
+    });
 });
-
-// - Initialize currency UI and page state - //
-(function initCurrencyUI() {
-    setupCurrencyToggle();
-    if (document.querySelector(".shop-item")) {
-        updateShopPrices();
-        updateAllBadges();
-    }
-    if (document.getElementById("summary")) {
-        render();
-    }
-})();
 
 //// ---- MODALS ---- ////
 
