@@ -14,12 +14,14 @@
             <h1>Hidden Histories of Japan</h1>
             <button onclick="location.href='../index.html'">Home</button>
             <button onclick="location.href='../html/staff.html'">Staff</button>
-            <button onclick="location.href='../html/collections.html'">Collections</button>
+            <button class="active" onclick="location.href='../html/collections.html'">Collections</button>
             <button onclick="location.href='../html/shop.html'">Shop</button>
+            <button onclick="location.href='../html/cart.html'">Cart</button>
         </div>
         <p align="center">
-            <button onclick="showSection('anthropology')">Anthropology</button>
+            <button class="active" onclick="showSection('anthropology')">Anthropology</button>
             <button onclick="showSection('archaeology')">Archaeology</button>
+            <button onclick="showSection('histories')">Histories</button>
         </p>
 
         <section id="anthropology" class="collection-section">
@@ -101,13 +103,22 @@
                         </p>
                     </div>
                     <div class="collections-image-1 photo-container">
-                        <img src="../images/collections/JapanMuseum-Collections-Anthropology-Textile.jpg" alt="Image of Japanese textile" class="photo-image">
+                        <img src="../images/collections/JapanMuseum-Collections-Anthropology-Textile.jpg" alt="Image of Japanese textile" class="photo-image" onclick="openModalText(this)" aria-describedby="textile-description">
+                        <div style="display: none" id="textile-description">
+                            <p>1</p>
+                        </div>
                     </div>
                     <div class="collections-image-2 photo-container">
-                        <img src="../images/collections/JapanMuseum-Collections-Anthropology-PrayerSticks.jpg.png" alt="Image of Ainu prayer sticks" class="photo-image">
+                        <img src="../images/collections/JapanMuseum-Collections-Anthropology-PrayerSticks.jpg.png" alt="Image of Ainu prayer sticks" class="photo-image" onclick="openModalText(this)" aria-describedby="prayerSticks-description">
+                        <div style="display: none" id="prayerSticks-description">
+                            <p>2</p>
+                        </div>
                     </div>
                     <div class="collections-image-3 photo-container">
-                        <img src="../images/collections/JapanMuseum-Collections-Anthropology-MemoryBox.jpg" alt="Image of a Japanese memory box" class="photo-image">
+                        <img src="../images/collections/JapanMuseum-Collections-Anthropology-MemoryBox.jpg" alt="Image of a Japanese memory box" class="photo-image" onclick="openModalText(this)" aria-describedby="memoryBox-description">
+                        <div style="display: none" id="memoryBox-description">
+                            <p>3</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -194,6 +205,60 @@
 
                     </div>
                     <div class="collections-image-1 photo-container">
+                        <img src="../images/collections/JapanMuseum-Collections-Archeology-ClayMask.jpg" alt="Image of a Japanese clay mask" class="photo-image" onclick="openModalText(this)" aria-describedby="mask-description">
+                        <div style="display: none" id="mask-description">
+                            <p>4</p>
+                        </div>
+                    </div>
+                    <div class="collections-image-2 photo-container">
+                        <img src="../images/collections/JapanMuseum-Collections-Archeology-BronzeBellFragment.jpg" alt="Image of a Japanese bronze bell fragment" class="photo-image" onclick="openModalText(this)" aria-describedby="bell-description">
+                        <div style="display: none" id="bell-description">
+                            <p>5</p>
+                        </div>
+                    </div>
+                    <div class="collections-image-3 photo-container">
+                        <img src="../images/collections/JapanMuseum-Collections-Archeology-CharredTimber.jpg" alt="Image of Japanese charred timber" class="photo-image" onclick="openModalText(this)" aria-describedby="timber-description">
+                        <div style="display: none" id="timber-description">
+                            <p>6</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="histories" class="collection-section">
+            <div class="grid-container-collections grid-container">
+                <div class="content-area">
+                    <div class="collections-title">
+                        <h2>Histories - What does all this mean?</h2>
+                    </div>
+                    
+                    <div class="item-collections-1">
+                        <h3>Clay Mask of the Northern Coast</h3>
+                        <p>
+                            
+                        <p>
+                            <b>Image source: </b><a href="https://www.metmuseum.org/art/collection/search/45530" target="_blank">Here</a>
+                        </p>
+                    </div>
+                    <div class="item-collections-2">
+                        <h3>Ainu Carved Prayer Stick (Inau)</h3>
+                        <p>
+                            
+                        <p>
+                            <b>Image source: </b><a href="https://brooklynmuseum.org/objects/6112" target="_blank">Here</a>
+                        </p>
+                    </div>
+                    <div class="item-collections-3">
+                        <h3>Charred Timber from Hilltop Dwelling</h3>
+                        <p>
+                            
+                        <p>
+                            <b>Image source: </b><a href="https://www.shousugiban.co.nz/history-of-shou-sugi-ban" target="_blank">Here</a>
+                        </p>
+
+                    </div>
+                    <div class="collections-image-1 photo-container">
                         <img src="../images/collections/JapanMuseum-Collections-Archeology-ClayMask.jpg" alt="Image of a Japanese clay mask" class="photo-image">
                     </div>
                     <div class="collections-image-2 photo-container">
@@ -205,7 +270,13 @@
                 </div>
             </div>
         </section>
-            
+
+        <div class="modal" id="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+                <div id="modal-text"></div>
+            </div>
+        </div>
 
         <footer>
             <p>This page was created as an academic activity and all information is fictional.<br>Some textual content was created using generative AI and directed by a human.<br>Background image source: <a href="https://www.freepik.com/free-photos-vectors/japanese-pattern" target="_blank">Here</a> (was edited in Photoshop)</p>
@@ -216,6 +287,10 @@
                 const sections = document.querySelectorAll('.collection-section');
                 sections.forEach(s => s.style.display = 'none');
                 document.getElementById(section).style.display = 'block';
+
+                const buttons = document.querySelectorAll('p[align="center"] button');
+                buttons.forEach(b => b.classList.remove('active'));
+                event.target.classList.add('active');
             }
         </script>
     </body>

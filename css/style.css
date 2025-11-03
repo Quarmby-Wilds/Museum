@@ -34,6 +34,9 @@ h4 {
 a {
     color: #9E6313;
 }
+a:hover {
+    color: #5e3c0b;
+}
 
 .title-bar {
     background-color: #183341;
@@ -64,6 +67,12 @@ button {
     display: inline-block;
     border-radius: 10px;
     text-transform: uppercase;
+}
+.title-bar button.active {
+    background-color: #573202;
+}
+button:hover {
+    background-color: #382206;
 }
 
 .content-area {
@@ -226,6 +235,10 @@ button {
 
 /* collections.html formatting */
 
+button.active {
+    background-color: #573202;
+}
+
 .grid-container-collections {
     display: grid;
     grid-template-columns: 1fr minmax(0, 1200px) 1fr;
@@ -324,7 +337,31 @@ button {
     margin-left: 28%;
 }
 
-.buy-button {
+.source-and-qty {
+    display: inline-flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.source-and-qty .source-text {
+    flex-grow: 1;
+}
+
+.qty-badge {
+    font-weight: bold;
+    color: #3b2f2f;
+    margin-left: 10px;
+}
+
+.shop-currency-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0;
+}
+
+/* .buy-button {
     background-color: #462B08;
     border: none;
     color: #FFE5C3;
@@ -334,7 +371,69 @@ button {
     display: inline-block;
     border-radius: 10px;
     text-transform: uppercase;
+} */
+
+/* Cart */
+
+.grid-container-cart {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 1200px) 1fr;
+    grid-template-rows: auto;
 }
+
+.cart-main {
+    grid-column: 1 / span 3;
+    background-color: rgba(250, 247, 240, 0.92);
+    border-radius: 25px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.qty-badge {
+    display: inline-block;
+    margin-top: 6px;
+    font-weight: bold;
+    color: #3b2f2f;
+}
+
+.actions {
+    text-align: center;
+    margin-top: 20px;
+}
+.actions button {
+    margin: 5px 10px;
+}
+
+.currency-btn {
+    font-size: 0.9em;
+    padding: 4px 8px;
+    margin-left: 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 10px;
+    text-transform: uppercase;
+    background-color: #462B08;
+    border: none;
+    color: #FFE5C3;
+}
+.currency-btn.active {
+    background-color: #573202;
+    font-weight: bold
+}
+
+#emptyMsg {
+    white-space: pre-wrap;
+    color: #462B08;
+    font-family: "Playfair Display Italic", serif;
+}
+#summary {
+    white-space: pre-wrap;
+    color: #462B08;
+    font-family: "Playfair Display Italic", serif;
+}
+
+/* Modals */
 
 .modal {
     display: none;
